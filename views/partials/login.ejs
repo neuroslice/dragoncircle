@@ -1,0 +1,50 @@
+<% if (message) { %>
+   <div class="w3-container w3-red w3-display-container">
+      <span onclick="this.parentElement.style.display='none'"
+            class="w3-button w3-red w3-large w3-display-topright">&times;</span>
+      <p><%- message %></p>
+   </div>
+<% } %>
+<a href="/auth/facebook"><img src="public/img/FBblue50.png" alt="login with facebook" style="position:absolute;right:-3vw;bottom:3vh;"></a>
+
+<div class="w3-container">
+</br></br></br>
+<form action="/login" method="post" id='loginform' style:"float:left;">
+	<div>
+	<input type="text" name="username" class="w3-input w3-round w3-animate-input" placeholder="username" autocomplete="off"/><br/>
+	</div>
+	<div>
+	<input type="password" name="password" class="w3-input w3-round w3-animate-input" placeholder="password" autocomplete="off"/>
+	</div>
+	<div>
+   <input class="w3-check" type="checkbox" name="register" id='selectreg' autocomplete="off">
+   <label>Register</label>
+	<input type="submit" value="Submit" class="w3-btn w3-cyan w3-round-large w3-hover-aqua w3-right" autocomplete="off"/>
+	</br>
+	
+	</div>
+</form>
+
+</div>
+
+<!--<script src="/socket.io/socket.io.js"></script>-->
+<script>
+ // var socket = io();
+  //socket.on('loginfail', function (data) {
+  //  console.log(data);
+  //  alert(data);
+  //});
+
+$("#selectreg").change(function() {
+  var action = document.getElementById('selectreg').checked == true ? "/register" : "/login";
+  console.log(action);
+  $("#loginform").attr("action", action);
+  FB.getLoginStatus(function(response){
+					//if (response.status === 'connected') {
+						console.log(response);
+					//}
+				});
+});
+
+</script>
+

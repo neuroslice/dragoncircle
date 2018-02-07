@@ -1,0 +1,36 @@
+<style>
+
+.dragnav{
+    content: url('/public/img/dragoncircle_blue.png');
+    width:70px;
+	height:70px;
+	-ms-transform: rotate(7deg); /* IE 9 */
+    -webkit-transform: rotate(7deg); /* Chrome, Safari, Opera */
+    transform: rotate(7deg);
+	position:relative;
+	z-index:1;
+}
+.dragnav:hover, dragnav:focus {
+    content: url('/public/img/dragoncircle_green.png');
+	width:70px;
+	height:70px;
+	-ms-transform: rotate(-22deg); /* IE 9 */
+    -webkit-transform: rotate(-22deg); /* Chrome, Safari, Opera */
+    transform: rotate(-22deg);
+}
+</style>
+<div class="w3-dropdown-hover">
+
+		<div class="dragnav">
+		</div>
+
+		<div id="myDropdown" class="w3-dropdown-content w3-bar-block w3-card-4">
+		<a href="/">Home</a></br>
+        <a href="/profile">profile</a></br>
+		<a href="/rooms">rooms</a></br>
+		<a href="/contact">contact</a></br>
+		<a href="/logout">Log out</a>
+
+		</div>
+	  
+</div>

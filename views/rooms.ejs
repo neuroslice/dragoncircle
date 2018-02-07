@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('./partials/head', {title:'rooms'}); %>
+</head>
+<body>
+<header>
+		<%- include ./partials/header %>
+</header>
+
+
+
+
+<div class="w3-card-3 w3-margin w3-cell w3-display-left" style="height:60vh;  overflow-x: auto;background-image: url('../public/img/steel.jpeg'); border: 4px solid black;  border-radius: 2px;" id='roomlist'>
+ROOMS OWNED
+         <% for (var i = 0; i < roomsOwned.length; i++) { %> 
+<div class="w3-container w3-gray">
+   <p><a href="/rooms/<%- roomsOwned[i].gametitle %>"> <%= roomsOwned[i].gametitle %> </a> </br>
+   DM: <%= roomsOwned[i].owner %></br>
+   players: <%= roomsOwned[i].players %></br>
+</div>
+</br>
+<% } %>
+</div>
+
+
+
+<div class="w3-card-3 w3-margin w3-cell w3-display-middle" style="height:60vh; overflow-x: auto;background-image: url('../public/img/steel.jpeg'); border: 4px solid black;  border-radius: 2px;" id='roomlist'>
+ROOMS JOINED
+         <% for (var i = 0; i < roomsJoined.length; i++) { %> 
+<div class="w3-container w3-gray">
+   <p><a href="/rooms/<%- roomsJoined[i].gametitle %>"> <%= roomsJoined[i].gametitle %> </a> </br>
+   DM: <%= roomsJoined[i].owner %></br>
+   players: <%= roomsJoined[i].players %></br>
+</div>
+</br>
+<% } %>
+</div>
+
+
+
+<footer>
+		<%- include ./partials/footer %>
+</footer>
+   <script>
+$("#selectcreate").change(function() {
+  var action = document.getElementById('selectcreate').checked == true ? "/create" : "/join";
+  $("#joinform").attr("action", action);
+});
+</script>
+</body>
+</html>

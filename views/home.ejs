@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('./partials/head', {title:'home'}); %>
+</head>
+<body>
+
+
+
+<div class="w3-display-container w3-mobile" style="height:100vh">
+<div class="w3-display-topleft">	
+		<%- include ./partials/header %>
+</div>
+<div class="w3-display-middle" style="margin-left:2.5vw;">
+<img style="z-index:-1;" src="/public/img/dragon_cover.png"/>
+</div>
+
+<section class="w3-container w3-display-middle" style="margin-top:1vh;">
+
+
+<% if (!user) { %>
+
+      <%- include('./partials/login', {message: message}); %>
+      
+<% } else { %>
+
+   <div class="w3-container" style="margin-top:6vh;margin-left:3vw;">
+    <p>Greetings, <a href="/profile"><b><%= user.username %></b></a> 
+	Join one of the <a href="/rooms"><b>rooms</b></a>?</p>
+    <%- include('./partials/roomlogin', {room_message: room_message}); %>
+
+   
+<% } %>
+
+</section>
+</div>
+
+<footer>
+		<%- include ./partials/footer %>
+	</footer>
+<script>
+  $("#selectcreate").change(function() {
+  var action = document.getElementById('selectcreate').checked == true ? "/create" : "/join";
+  $("#joinform").attr("action", action);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('./partials/head', {title:'profile'}); %>
+</head>
+<body>
+<header>
+		<%- include ./partials/header %>
+</header>
+<div class="w3-card-3 w3-margin w3-cell w3-display-middle" style="height:80vh; overflow-x: auto;background-image: url('../public/img/steel.jpeg'); border: 4px solid black;  border-radius: 2px;" id='roomlist'>
+<div class="w3-container w3-gray">
+<p>
+<b>User ID: <%= user.$loki %></b></br>
+Username: <span id="user"><%= user.username %></span><br/>
+Name: <%= user.displayName %><br/>
+Email: <%= user.emails[0] %><br/>
+<b>Character</b> </br>
+name: <%- (user.characters[0].name) %> </br>
+race: <%- (user.characters[0].race) %></br>
+class: <%- (user.characters[0].class) %></br>
+level: <%- (user.characters[0].level) %></br>
+</p>
+</div>
+<div class="w3-container w3-left">
+<form action="/character-update" method="post" id='joinform'>
+	<label>Name: </label>
+      <input type="text" name="name" class="w3-input w3-round w3-small w3-animate-input" autocomplete="off" /><br/>
+      <label>Race: </label>
+      <input type="text" name="race" class="w3-input w3-round w3-small w3-animate-input" autocomplete="off" /><br/>
+      <label>Class: </label>
+      <input type="text" name="class" class="w3-input w3-round w3-small w3-animate-input" autocomplete="off" /><br/>
+      <label>Level: </label>
+      <input type="text" name="level" class="w3-input w3-round w3-small w3-animate-input" autocomplete="off" /><br/>
+     
+	  <div>
+      <input type="submit" value="Update" class="w3-btn w3-cyan w3-round-large w3-hover-aqua w3-right" autocomplete="off"/>
+      </div>
+	  <input class="w3-hide" name="owner" id="owner"/>
+
+   </form>
+   </div>
+  </div>
+<footer>
+		<%- include ./partials/footer %>
+</footer>
+<script>
+   $('#owner').val( $('#user').html());
+
+</script>
+</body>
+</html>

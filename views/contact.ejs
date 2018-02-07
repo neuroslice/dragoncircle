@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('./partials/head', {title:'profile'}); %>
+</head>
+<body>
+<header>
+		<%- include ./partials/header %>
+</header>
+	
+you may email dwmarx@ucsc.edu with bug reports and feature requests.
+	
+
+<footer>
+		<%- include ./partials/footer %>
+</footer>
+   <script>
+$("#selectcreate").change(function() {
+  var action = document.getElementById('selectcreate').checked == true ? "/create" : "/join";
+  $("#joinform").attr("action", action);
+});
+</script>
+</body>
+</html>

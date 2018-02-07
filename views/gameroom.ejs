@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('./partials/head', {title:room.gametitle}); %>
+   <script type="text/javascript" src="/public/lib/janus.js" ></script>
+   <!-- Setting up the Session and Handle to the textroom plugin -->
+   <script type="text/javascript" src="/public/lib/inputParse.js"></script>
+</head>
+<body>
+
+<% if (!isMember) { %>
+      <form action="/enterroom" method="post" id='enterform'>
+      <input placeholder="secret" type="password" name="secret" class="w3-input w3-round w3-small w3-animate-input" autocomplete="off" />
+	  	  <input class="w3-hide" name="path" id="path"/>
+
+      <div>
+      <input type="submit" value="Join" class="w3-btn w3-cyan w3-round-large w3-hover-aqua w3-right" autocomplete="off"/>
+      </div>
+
+   </form>
+<script>
+  $('#path').val(window.location.pathname);
+</script>
+<% } else { %>
+
+<div class="w3-display-container" style="height:100vh">
+<div class="w3-container w3-display-middle" id="spincontainer">
+   <p>name: <span id='myname'><%= user.username %></span></br>
+   room: <span id='myroom'><%= room.$loki %></span>
+      DM: <span id='mydm'><%= room.owner %></span></p>
+
+   <img src="/public/img/dragoncircle_red.png" style="width:300px; height:300px;" id="dragonspin">
+</div>
+
+<div class="w3-hide w3-container" id="room" style="">
+
+<div class="w3-quarter w3-container">
+      <div class="w3-card w3-display-container videocard" style="height:30vh">
+         <div id="videolocal" class="w3-container w3-display-left">
+         </div>
+		 <div id="localstats" class="w3-container w3-display-right">
+		 name: <%= user.characters[0].name %> </br>
+		 class: <%= user.characters[0].class %></br>
+		 race: <%= user.characters[0].race %></br>
+		 level: <%= user.characters[0].level %></br>
+		</div>
+      </div>
+      <div class="w3-card w3-panel w3-display-container videocard" style="height:30vh">
+         <div id="videoremote2" class="w3-container w3-display-left">
+         </div>
+		 <div id="stats2" class="w3-container w3-display-right">
+		 </div>
+      </div>
+      <div class="w3-card w3-panel w3-display-container videocard" style="height:30vh">
+         <div id="videoremote4" class="w3-container w3-display-left">
+         </div>
+		 <div id="stats4" class="w3-container w3-display-right">
+		 </div>
+      </div>
+   </div>
+   
+   <div class="w3-half w3-container w3-text-black">
+      <div class="w3-card videocard"  style="width:45vw; height:95vh; background-image: url('../public/img/parchment.png'); border: 8px solid black;  border-radius: 2px;">
+         <div class="w3-right">
+		 		<%- include ./partials/header %> 
+		</div>
+		 <h3>Participants: <style= "color:purple;"></h3>
+         <h3>You: <span id="participant" style= "color:purple;"></h3>
+         <ul id="list" class="w3-ul">
+         </ul>
+         <div style="center; height:60vh; overflow-x: auto; background-image: url('../public/img/parchment.png'); " id="chatroom">
+         <% for (var i = 0; i < messages.length; i++) { %> 
+            <% if (messages[i].to) { %>
+               <p style="color: purple;"> [<%=messages[i].time%>] 
+               <b>[whisper from ' <%= messages[i].from%> ']</b> <%=messages[i].text%> </p>
+            <% }else if (messages[i].type == "roll"){ %>
+               <p style="color: #7c0d0d;"> [<%=messages[i].time%>] 
+               <b> <%= messages[i].from%> </b> <%=messages[i].text%> </p>
+			<%  }else if (messages[i].type == "emote"){ %>
+               <p style="color: green;">[<%=messages[i].time%>] 
+               <b> <%= messages[i].from%> </b> <%=messages[i].text%>. </p>
+            <% }else{ %>
+               <p style="color: black;"> [<%=messages[i].time%>] 
+               <b> <%= messages[i].from%>: </b> <%=messages[i].text%> </p>
+         <% }} %>
+         </div>
+         <% if (user.username == room.owner){ %>
+			<input type="button" id='stfu' class="w3-btn w3-purple w3-round-large w3-hover-aqua" value="STFU"/>
+			<input type="button" id='clearlog' class="w3-btn w3-red w3-round w3-hover-gray" value="CLEAR"/>
+
+		<% } %>
+         <div class="w3-container w3-display-container" style=>   
+         
+         <input class="w3-input w3-container w3-display-bottom-left" style="width:20vw;height:9vh" type="text" placeholder="Write a chatroom message" autocomplete="off" id="datasend" onkeypress="return checkEnter(this, event);" disabled></input>
+
+         <div class="w3-display-right">
+           <input type="checkbox" id="bag" class="field-dice">
+            <h3 class="text-desc"></h3>
+            <label for="bag" class="label-dice">Like</label>     
+           <div class="toolbox" ></div>
+            <label class="overlay" for="bag"></label>
+            <button class="dice-d20" onclick="sendData($('#myname').html(),'/r1d20+0', 1000 + parseInt($('#myroom').html()));"><span class="legend-dice">d20</span></button>
+            <button class="dice-d10" onclick="sendData($('#myname').html(),'/r1d10+0', 1000 + parseInt($('#myroom').html()));"><span class="legend-dice">d10</span></button>
+            <button class="dice-d6" onclick="sendData($('#myname').html(),'/r1d6+0', 1000 + parseInt($('#myroom').html()));"><span class="legend-dice">d6</span></button>
+            <button class="dice-d8" onclick="sendData($('#myname').html(),'/r1d8+0', 1000 + parseInt($('#myroom').html()));"><span class="legend-dice">d8</span></button>
+            <button class="dice-d12" onclick="sendData($('#myname').html(),'/r1d12+0', 1000 + parseInt($('#myroom').html()));"><span class="legend-dice">d12</span></button>
+            <button class="dice-d4" onclick="sendData($('#myname').html(),'/r1d4+0', 1000 + parseInt($('#myroom').html()));"><span class="legend-dice">d4</span></button>
+         </div>
+
+         <div class="w3-display-bottom-right">
+            <button onclick="document.getElementById('id01').style.display='block'" class="w3-button w3-black">Character</button>
+            <div id="id01" class="w3-modal">
+               <div class="w3-modal-content w3-card-4 w3-animate-top">
+                  <header class="w3-container w3-black"> 
+                     <span onclick="document.getElementById('id01').style.display='none'" 
+                     class="w3-button w3-black w3-xlarge w3-display-topright">&times;</span>
+                     <h2>"<%- (user.characters[0].name) %>"</h2>
+                  </header>
+
+                  <div class="w3-bar w3-border-bottom">
+                     <button class="tablink w3-bar-item w3-button" onclick="openTab(event, 'Stats')">Stats</button>
+                     <button class="tablink w3-bar-item w3-button" onclick="openTab(event, 'Equipment')">Equipment</button>
+                     <button class="tablink w3-bar-item w3-button" onclick="openTab(event, 'Skills')">Skills</button>
+                     <button class="tablink w3-bar-item w3-button" onclick="openTab(event, 'Spells')">Spells</button>
+                  </div>
+
+                  <div id="Stats" class="w3-container tab">
+                     <div class="w3-cell" style="width:33%">
+                        <h1>Info</h1>
+                     Name: <%- (user.characters[0].name) %><br>
+                     Class: <%- (user.characters[0].class) %> <%- (user.characters[0].level) %><br>
+                     Race: <%- (user.characters[0].race) %><br>
+                     Background: <%- (user.characters[0].background) %><br>
+                     Alignment: <%- (user.characters[0].alignment) %><br>
+                     </div>
+
+                     <div class="w3-cell" style="width:33%">
+                        <h1>Stats</h1>
+                     Str: <%- (user.characters[0].strength) %> (<%- (user.characters[0].strengthModifier) %>)<br>
+                     Dex: <%- (user.characters[0].dexterity) %> (<%- (user.characters[0].dexterityModifier) %>)<br>
+                     Con: <%- (user.characters[0].constitution) %> (<%- (user.characters[0].consitutionModifier) %>)<br>
+                     Int: <%- (user.characters[0].intelligence) %> (<%- (user.characters[0].intelligenceModifier) %>)<br>
+                     Wis: <%- (user.characters[0].wisdom) %> (<%- (user.characters[0].wisdomModifier) %>)<br>
+                     Cha: <%- (user.characters[0].charisma) %> (<%- (user.characters[0].charismaModifier) %>)<br>
+                     </div>
+
+                     <div class="w3-cell" style="width:33%">
+                        <h1>HP: <%- (user.characters[0].currentHitPoints) %> / <%- (user.characters[0].maxHitPoints) %></h1>
+                     Armor Class: <%- (user.characters[0].armorClass) %><br>
+                     Initiative: <%- (user.characters[0].initiative) %><br>
+                     Speed: <%- (user.characters[0].moveSpeed) %><br>
+                     HitDice: <%- (user.characters[0].hitDice) %><br>
+                      </div>
+
+                  </div>
+
+                  <div id="Equipment" class="w3-container tab">
+                     <div class="w3-cell" style="width:33%">
+                     <h1>Attacks</h1>
+                     Attack 1: <%- (user.characters[0].attack1Name) %> +<%- (user.characters[0].attack1Bonus) %> <%- (user.characters[0].attack1damage) %><br>
+                     Attack 2: <%- (user.characters[0].attack2Name) %> +<%- (user.characters[0].attack2Bonus) %> <%- (user.characters[0].attack2damage) %><br>
+                     Attack 3: <%- (user.characters[0].attack3Name) %> +<%- (user.characters[0].attack3Bonus) %> <%- (user.characters[0].attack3damage) %><br>
+                     </div>
+                  </div>
+
+                  <div id="Skills" class="w3-container tab">
+                     <div class="w3-cell" style="width:33%">
+                        <h1>Saves</h1>
+                     Proficiency Bonus: <%- (user.characters[0].proficiency) %><br>
+                     <br>
+                     Saving Throws<br>
+                     Strength: <%- (user.characters[0].strengthSave) %><br>
+                     Dexterity: <%- (user.characters[0].dexteritySave) %><br>
+                     Constitution: <%- (user.characters[0].consitutionSave) %><br>
+                     Intelligence: <%- (user.characters[0].intelligenceSave) %><br>
+                     Wisdom: <%- (user.characters[0].wisdomSave) %><br>
+                     Charisma: <%- (user.characters[0].charismaSave) %><br>
+                     </div>
+
+                     <div class="w3-cell" style="width:33%">
+                        <h1>Skills</h1>
+                     Acrobatics: <%- (user.characters[0].acrobatics) %><br>
+                     Animal Handling: <%- (user.characters[0].animalHandling) %><br>
+                     Arcana: <%- (user.characters[0].arcana) %><br>
+                     Athletics: <%- (user.characters[0].athleticism) %><br>
+                     Deception: <%- (user.characters[0].deception) %><br>
+                     History: <%- (user.characters[0].history) %><br>
+                     Insight: <%- (user.characters[0].insight) %><br>
+                     Intimidation: <%- (user.characters[0].intimidation) %><br>
+                     Investigation: <%- (user.characters[0].investigation) %><br>
+                     Medicine: <%- (user.characters[0].medicine) %><br>
+                     Nature: <%- (user.characters[0].nature) %><br>
+                     Perception: <%- (user.characters[0].perception) %><br>
+                     Performance: <%- (user.characters[0].performance) %><br>
+                     Persuasion: <%- (user.characters[0].persuasion) %><br>
+                     Religion: <%- (user.characters[0].religion) %><br>
+                     Sleight of Hand: <%- (user.characters[0].sleightOfHand) %><br>
+                     Stealth: <%- (user.characters[0].stealth) %><br>
+                     Survival: <%- (user.characters[0].survival) %><br>
+                     </div>
+                  </div>
+
+                  <div id="Spells" class="w3-container tab">
+                     <h1>Spells</h1>
+                     <p>WIP</p><br>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <script>
+         document.getElementsByClassName("tablink")[0].click();
+         var modal = document.getElementById('id01');
+
+         window.onclick = function(event) {
+            if (event.target == modal) {
+               modal.style.display = "none";
+            }
+         }
+
+         function openTab(evt, tabName) {
+           var i, x, tablinks;
+           x = document.getElementsByClassName("tab");
+           for (i = 0; i < x.length; i++) {
+             x[i].style.display = "none";
+           }
+           tablinks = document.getElementsByClassName("tablink");
+           for (i = 0; i < x.length; i++) {
+             tablinks[i].classList.remove("w3-light-grey");
+           }
+           document.getElementById(tabName).style.display = "block";
+           evt.currentTarget.classList.add("w3-light-grey");
+         }
+         </script>
+
+      </div>
+      </div>
+   </div>
+   
+   <div class="w3-quarter w3-container">
+      <div class="w3-card w3-panel w3-display-container videocard" style="height:30vh">
+         <div id="videoremote1" class="w3-container w3-display-right">
+         </div>
+		 <div id="stats1" class="w3-container w3-display-left">
+		 </div>
+      </div>
+      <div class="w3-card w3-panel w3-display-container videocard" style="height:30vh">
+         <div id="videoremote3" class="w3-container w3-display-right">
+         </div>
+		 <div id="stats3" class="w3-container w3-display-left">
+		 </div>
+      </div>
+      <div class="w3-card w3-panel w3-display-container videocard" style="height:30vh">
+         <div id="videoremote5" class="w3-container w3-display-right">
+         </div>
+		 <div id="stats5" class="w3-container w3-display-left">
+		 </div>
+      </div>
+   </div>
+</div>
+</div>
+<footer>
+		<%- include ./partials/footer %>
+	</footer>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script type='text/javascript'>
+var socket;
+$(document).ready(function() {
+  var socket = window.socket = io();
+  var myname = $('#myname').html();
+      var myroom = 1000 + parseInt($('#myroom').html());
+   
+//INITIALIZE JANUS 
+   console.log(myroom);
+//INITIALIZE SOCKETS
+  var STFUMODE = false;
+  var wasMuted = false;
+
+//This causes us to differentiate rooms for the socket
+//needed for muting and log clearing of course
+  socket.on('connect', function(){
+	socket.emit('room', myroom);
+  });
+  
+//this is executed for the players when they receive the DMs STFU signal
+  socket.on('player stfu', function(){
+	if ($('#myname').html() != $('#mydm').html()){
+		//activate STFU mode
+		if (!STFUMODE){
+			var muted = sfutest.isAudioMuted();
+			//console.log('was ' + muted);
+			wasMuted = muted;
+			if (!muted) sfutest.muteAudio();
+			$('#mute').attr('disabled', true);
+			STFUMODE = true;
+		}else {
+			$('#mute').attr('disabled', false);
+			if (!wasMuted) sfutest.unmuteAudio();
+			STFUMODE = false;
+		}
+	}
+  });
+//for the players client to know to clear the log now
+  socket.on('clear log', function (){
+	$('#chatroom').empty();
+  });
+  //for updating when a new person joins or changes character information
+  socket.on('update player', function(playerUpdate){
+    //get playerUpdate.index to find out which div to change the html of using jquery
+	//using the info contained in playerUpdate.character
+	var divID = "#stats" + playerUpdate.index;
+	var character = playerUpdate.character;
+	console.log(character);
+	$(divID).empty();
+	$(divID).append("name: "+character.name+"</br>");
+	$(divID).append("class: "+character.class+"</br>");
+	$(divID).append("race: "+character.race+"</br>");
+	$(divID).append("level: "+character.level+"</br>");
+
+  });
+//DM STFU signal send
+  $("#stfu").click(function(){
+	socket.emit('DM stfu');
+	if (!STFUMODE) {
+		$('#stfu').val("unSTFU");
+		STFUMODE = true;
+	}else{
+		$('#stfu').val("STFU");
+		STFUMODE = false;
+	} 
+  });
+  
+  $("#clearlog").click(function(){
+	socket.emit('DM clear', myroom);
+  });
+  
+  
+  $.getScript("/public/lib/textroomtest.js").done(function(){
+      
+	  initJanus(myname, myroom);
+	});
+});
+
+
+
+</script>
+<% } %>
+
+</body>
+</html>

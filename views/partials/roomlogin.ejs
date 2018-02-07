@@ -1,0 +1,21 @@
+<% if (room_message) { %>
+   <div class="w3-container w3-red w3-display-container">
+      <span onclick="this.parentElement.style.display='none'"
+            class="w3-button w3-red w3-large w3-display-topright">&times;</span>
+      <p><%- room_message %></p>
+   </div>
+<% } %>
+<form action="/join" method="post" id='joinform'>
+      <input placeholder="room name" type="text" name="gametitle" class="w3-input w3-round w3-small w3-animate-input" autocomplete="off" /><br/>
+      <input placeholder="secret (optional)" type="password" name="secret" class="w3-input w3-round w3-small w3-animate-input" autocomplete="off" />
+      <div>
+      <input class="w3-check" type="checkbox" name="create" id='selectcreate' autocomplete="off"/>
+      <label>Create new?</label>
+      <input type="submit" value="Join" class="w3-btn w3-cyan w3-round-large w3-hover-aqua w3-right" autocomplete="off"/>
+      </div>
+	  <input class="w3-hide" name="path" id="path"/>
+
+   </form>
+   <script>
+   $('#path').val(window.location.pathname);
+   </script>
